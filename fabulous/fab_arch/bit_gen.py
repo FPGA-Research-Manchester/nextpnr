@@ -2851,21 +2851,26 @@ fabric = GetFabric(FabricFile)  #filter = 'Fabric' is default to get the definit
 # I wanted to store parameters in our fabric csv between a block 'ParametersBegin' and ParametersEnd'
 ParametersFromFile = GetFabric(FabricFile, filter = 'Parameters')
 for item in ParametersFromFile:
-	# if the first element is the variable name, then overwrite the variable state with the second element, otherwise it would leave the default
-	if 'ConfigBitMode' == item[0]:
-		ConfigBitMode = item[1]
-	elif 'FrameBitsPerRow' == item[0]:
-		FrameBitsPerRow = int(item[1])
-	elif 'Package' == item[0]:
-		Package = int(item[1])
-	elif 'MaxFramesPerCol' == item[0]:
-		MaxFramesPerCol = int(item[1])
-	elif 'GenerateDelayInSwitchMatrix' == item[0]:
-		GenerateDelayInSwitchMatrix = int(item[1])
-	elif 'MultiplexerStyle' == item[0]:
-		MultiplexerStyle = item[1]
-	else:
-		raise ValueError('\nError: unknown parameter "'+item[0]+'" in fabric csv at section ParametersBegin\n')
+    # if the first element is the variable name, then overwrite the variable state with the second element, otherwise it would leave the default
+    if 'ConfigBitMode' == item[0]:
+         ConfigBitMode = item[1]
+    elif 'FrameBitsPerRow' == item[0]:
+         FrameBitsPerRow = int(item[1])
+    elif 'Package' == item[0]:
+         Package = int(item[1])
+    elif 'MaxFramesPerCol' == item[0]:
+         MaxFramesPerCol = int(item[1])
+    elif 'GenerateDelayInSwitchMatrix' == item[0]:
+         GenerateDelayInSwitchMatrix = int(item[1])
+    elif 'MultiplexerStyle' == item[0]:
+         MultiplexerStyle = item[1]
+    elif 'SuperTileEnable' == item[0]:
+        if item[1] == "TRUE":
+            SuperTileEnable = True
+        elif item[1] == "FALSE":
+            SuperTileEnable = False
+    else:
+        raise ValueError('\nError: unknown parameter "'+item[0]+'" in fabric csv at section ParametersBegin\n')
 
 	
 ### # from StackOverflow  config.get("set", "var_name") 
