@@ -23,4 +23,10 @@ yosys clean
 yosys hierarchy -check
 yosys stat
 
-if {$argc > 1} { yosys write_json [lindex $argv 2] }
+if {$argc > 1} {
+        if {[file extension [lindex $argv 2]] == ".blif"} { 
+                yosys write_blif [lindex $argv 2] 
+        } else { 
+                yosys write_json [lindex $argv 2] 
+        }
+}
