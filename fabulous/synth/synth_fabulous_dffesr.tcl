@@ -3,6 +3,7 @@
 
 set LUT_K 4
 if {$argc > 0} { set LUT_K [lindex $argv 0] }
+set for_vpr [expr {[file extension [lindex $argv 2]] == ".blif"}]
 yosys read_verilog -lib [file dirname [file normalize $argv0]]/prims_ff.v
 yosys hierarchy -check -top [lindex $argv 1]
 yosys proc
@@ -22,9 +23,15 @@ yosys simplemap
 yosys techmap -map [file dirname [file normalize $argv0]]/latches_map.v
 yosys abc -lut $LUT_K -dress
 yosys clean
-yosys techmap -D LUT_K=$LUT_K -map [file dirname [file normalize $argv0]]/cells_map_ff.v
+if {!$for_vpr} {yosys techmap -D LUT_K=$LUT_K -map [file dirname [file normalize $argv0]]/cells_map_ff.v}
 yosys clean
 yosys hierarchy -check
 yosys stat
 
-if {$argc > 1} { yosys write_json [lindex $argv 2] }
+if {$argc > 1} {
+        if {$for_vpr} { 
+                yosys write_blif [lindex $argv 2] 
+        } else { 
+                yosys write_json [lindex $argv 2] 
+        }
+}
