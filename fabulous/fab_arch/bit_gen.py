@@ -282,24 +282,25 @@ class Fabric:
 # Main
 #####################################################################################
 
-if ('-genBitstream'.lower() in str(sys.argv).lower()) : #This is an elif so it doesn't get picked up by the genBitstreamSpec case - note these are mutually exclusive in one run
-	arguments = re.split(' ',str(sys.argv))
-	# index was not working...
-	i = 0
-	for item in arguments:
-		# print('debug',item)
-		if re.search('-genBitstream', arguments[i], flags=re.IGNORECASE):
-			break
-		i += 1
-	if arguments[i+1] == '' or arguments[i+2] == '' or arguments[i+3] == '':
-		raise ValueError('\nError: -genBitstream expect three file names - the fasm file, the spec file and the output file\n')
-	# stupid python adds quotes ' ' around the file name and a ',' -- bizarre 
-	substitutions = {",": "", "\'": "", "\]": "", "\[": ""}
-	# InFileName  = (replace(arguments[i+1], substitutions))
-	# don't ask me why I have to delete the stupid '['...; but at least works now
-	FasmFileName  = re.sub('\]','',re.sub('\'','',(replace(arguments[i+1], substitutions))))
-	SpecFileName  = re.sub('\]','',re.sub('\'','',(replace(arguments[i+2], substitutions))))
-	OutFileName  = re.sub('\]','',re.sub('\'','',(replace(arguments[i+3], substitutions))))
+#Strip arguments
+caseProcessedArguments = list(map(lambda x: x.strip(), sys.argv))
+processedArguments = list(map(lambda x: x.lower(), caseProcessedArguments))
+flagRE = re.compile("-\S*")
+
+if ('-genBitstream'.lower() in str(sys.argv).lower()):
+	argIndex = processedArguments.index('-genBitstream'.lower())
+	
+	if len(processedArguments) <= argIndex + 3:
+		raise ValueError('\nError: -genBitstream expect three file names - the fasm file, the spec file and the output file')
+	elif (flagRE.match(caseProcessedArguments[argIndex + 1])
+		or flagRE.match(caseProcessedArguments[argIndex + 2]) 
+		or flagRE.match(caseProcessedArguments[argIndex + 3])):
+		raise ValueError('\nError: -genBitstream expect three file names, but found a flag in the arguments:'
+			f' {caseProcessedArguments[argIndex + 1]}, {caseProcessedArguments[argIndex + 2]}, {caseProcessedArguments[argIndex + 3]}\n')
+
+	FasmFileName  = caseProcessedArguments[argIndex + 1]
+	SpecFileName  = caseProcessedArguments[argIndex + 2]
+	OutFileName  = caseProcessedArguments[argIndex + 3]
 
 	genBitstream(FasmFileName, SpecFileName, OutFileName)
 
