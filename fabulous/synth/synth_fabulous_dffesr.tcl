@@ -7,7 +7,7 @@ set for_vpr [expr {[file extension [lindex $argv 2]] == ".blif"}]
 yosys read_verilog -lib [file dirname [file normalize $argv0]]/prims_ff.v
 yosys hierarchy -check -top [lindex $argv 1]
 yosys proc
-yosys flatten
+#yosys flatten
 yosys tribuf -logic
 yosys deminout
 yosys synth -run coarse
